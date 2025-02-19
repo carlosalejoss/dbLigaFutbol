@@ -167,3 +167,4 @@ FOR EACH ROW
 BEGIN
     :NEW.idPartido := secPartidos.NEXTVAL;
 END;
+/
