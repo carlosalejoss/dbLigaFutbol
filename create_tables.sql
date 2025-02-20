@@ -13,8 +13,8 @@ CREATE TABLE TEMPORADA (
 -- Tabla para la relación entre divisiones y temporadas.
 CREATE TABLE pertenece (
     idPertenece NUMBER(20) PRIMARY KEY,
-    division    VARCHAR(20) NULL,
-    temporada   NUMBER(5)   NULL,
+    division    VARCHAR(20) NULL, -- NULL para las divisiones que no pertenecen a ninguna temporada (relacion 0-N)
+    temporada   NUMBER(5)   NULL, -- NULL para las temporadas que no pertenecen a ninguna división (relacion 0-N)
     FOREIGN KEY (division)  REFERENCES DIVISION(denominacionOficial),
     FOREIGN KEY (temporada) REFERENCES TEMPORADA(agno)
 );
@@ -49,23 +49,9 @@ CREATE TABLE EQUIPO (
     nombreHistorico VARCHAR(60),
     ciudad          VARCHAR(50) NOT NULL,
     fechaFundacion  NUMBER(5),
-    estadio         VARCHAR(50),
+    estadio         VARCHAR(50) NOT NULL,
     FOREIGN KEY (estadio) REFERENCES ESTADIO(nombreEstadio)
 );
-
--- Secuencia para la tabla EQUIPOS
-CREATE SEQUENCE secEquipos
-    START WITH 1
-    INCREMENT BY 1;
-
--- Trigger para la secuencia en la clave artificial nombreOficial de la tabla EQUIPOS
-CREATE OR REPLACE TRIGGER trg_equipos_id
-BEFORE INSERT ON EQUIPO
-FOR EACH ROW
-BEGIN
-    :NEW.nombreOficial := secEquipos.NEXTVAL;
-END;
-/
 
 
 -- Tabla para la relación entre equipos y temporadas
