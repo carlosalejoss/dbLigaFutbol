@@ -45,7 +45,7 @@ CREATE TABLE ESTADIO (
 -- Tabla para los equipos
 CREATE TABLE EQUIPO (
     nombreOficial   VARCHAR(50) PRIMARY KEY,
-    nombreCorto     VARCHAR(50),
+    nombreCorto     VARCHAR(50) NOT NULL UNIQUE,
     nombreHistorico VARCHAR(60),
     ciudad          VARCHAR(50) NOT NULL,
     fechaFundacion  NUMBER(5),
