@@ -83,8 +83,8 @@ END;
 -- Tabla para los otros nombres de los equipos
 CREATE TABLE otrosNombres (
     idOtrosNombres NUMBER(20) PRIMARY KEY,
-    otrosNombres   VARCHAR(50),
     equipo         VARCHAR(50) NOT NULL,
+    otrosNombres   VARCHAR(50),
     FOREIGN KEY (equipo) REFERENCES EQUIPO(nombreOficial)
 );
 
