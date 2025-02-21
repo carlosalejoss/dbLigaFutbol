@@ -36,7 +36,7 @@ END;
 
 -- Tabla para los estadios
 CREATE TABLE ESTADIO (
-    nombreEstadio    VARCHAR(50) PRIMARY KEY,
+    nombreEstadio    VARCHAR(60) PRIMARY KEY,
     fechaInauguracion NUMBER(5),
     capacidad         NUMBER(8)
 );
@@ -44,12 +44,12 @@ CREATE TABLE ESTADIO (
 
 -- Tabla para los equipos
 CREATE TABLE EQUIPO (
-    nombreOficial   VARCHAR(50) PRIMARY KEY,
-    nombreCorto     VARCHAR(50) NOT NULL UNIQUE,
-    nombreHistorico VARCHAR(60),
-    ciudad          VARCHAR(50) NOT NULL,
+    nombreOficial   VARCHAR(60) PRIMARY KEY,
+    nombreCorto     VARCHAR(60) NOT NULL UNIQUE,
+    nombreHistorico VARCHAR(70),
+    ciudad          VARCHAR(60) NOT NULL,
     fechaFundacion  NUMBER(5),
-    estadio         VARCHAR(50) NOT NULL,
+    estadio         VARCHAR(60) NOT NULL,
     FOREIGN KEY (estadio) REFERENCES ESTADIO(nombreEstadio)
 );
 
@@ -58,10 +58,10 @@ CREATE TABLE EQUIPO (
 CREATE TABLE contiene (
     idContiene NUMBER(20) PRIMARY KEY,
     temporada  NUMBER(4) NOT NULL,
-    equipo     VARCHAR(50) NOT NULL,
+    equipo     VARCHAR(60) NOT NULL,
     puntos     NUMBER(3) NULL,
     FOREIGN KEY (temporada) REFERENCES TEMPORADA(agno),
-    FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombrCorto),
+    FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombreCorto),
     CONSTRAINT unq_equipo_temporada UNIQUE (equipo, temporada)
 );
 
@@ -83,7 +83,7 @@ END;
 -- Tabla para los otros nombres de los equipos
 CREATE TABLE otrosNombres (
     idOtrosNombres NUMBER(20) PRIMARY KEY,
-    equipo         VARCHAR(50) NOT NULL,
+    equipo         VARCHAR(60) NOT NULL,
     otrosNombres   VARCHAR(50),
     FOREIGN KEY (equipo) REFERENCES EQUIPO(nombreCorto)
 );
@@ -130,8 +130,8 @@ END;
 CREATE TABLE PARTIDO (
     idPartido       NUMBER(20) PRIMARY KEY,
     jornada         NUMBER(20) NOT NULL,
-    equipoLocal     VARCHAR(50) NOT NULL,
-    equipoVisitante VARCHAR(50) NOT NULL,
+    equipoLocal     VARCHAR(60) NOT NULL,
+    equipoVisitante VARCHAR(60) NOT NULL,
     golesLocal      NUMBER(3),
     golesVisitante  NUMBER(3),
     FOREIGN KEY (jornada)        REFERENCES JORNADA(idjornada),
