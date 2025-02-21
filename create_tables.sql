@@ -61,7 +61,7 @@ CREATE TABLE contiene (
     equipo     VARCHAR(50) NOT NULL,
     puntos     NUMBER(3) NULL,
     FOREIGN KEY (temporada) REFERENCES TEMPORADA(agno),
-    FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombreOficial),
+    FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombrCorto),
     CONSTRAINT unq_equipo_temporada UNIQUE (equipo, temporada)
 );
 
@@ -85,7 +85,7 @@ CREATE TABLE otrosNombres (
     idOtrosNombres NUMBER(20) PRIMARY KEY,
     equipo         VARCHAR(50) NOT NULL,
     otrosNombres   VARCHAR(50),
-    FOREIGN KEY (equipo) REFERENCES EQUIPO(nombreOficial)
+    FOREIGN KEY (equipo) REFERENCES EQUIPO(nombreCorto)
 );
 
 -- Secuencia para la tabla otrosNombres
@@ -135,8 +135,8 @@ CREATE TABLE PARTIDO (
     golesLocal      NUMBER(3),
     golesVisitante  NUMBER(3),
     FOREIGN KEY (jornada)        REFERENCES JORNADA(idjornada),
-    FOREIGN KEY (equipoLocal)    REFERENCES EQUIPO(nombreOficial),
-    FOREIGN KEY (equipoVisitante) REFERENCES EQUIPO(nombreOficial),
+    FOREIGN KEY (equipoLocal)    REFERENCES EQUIPO(nombreCorto),
+    FOREIGN KEY (equipoVisitante) REFERENCES EQUIPO(nombreCorto),
     CONSTRAINT chk_teams_not_equal CHECK (equipoLocal <> equipoVisitante), -- No se puede jugar un partido contra uno mismo
     CONSTRAINT chk_goles_no_negativos CHECK (golesLocal >= 0 AND golesVisitante >= 0)
 );
