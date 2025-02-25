@@ -40,11 +40,14 @@ WITH
         HAVING COUNT(*) >= 4
     )
 SELECT 
-    /* Subconsulta para la división de esa temporada. 
-       Suponemos que ‘pertenece’ sólo registra la división real en que se compite esa temporada. */
-    (SELECT MAX(p2.division)
-       FROM pertenece p2
-       WHERE p2.temporada = t.agno
+    ( SELECT MAX(per.division)
+      FROM pertenece per
+           JOIN contiene c
+             ON c.temporada = per.temporada
+           JOIN EQUIPO e
+             ON e.nombreCorto = c.equipo
+      WHERE per.temporada = t.agno
+        AND e.nombreCorto = 'Zaragoza'
     ) AS division,
     t.agno AS temporada,
     /* Subconsulta que calcula el total de goles del Zaragoza:
