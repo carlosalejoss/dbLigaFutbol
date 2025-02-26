@@ -1,14 +1,15 @@
 CREATE TABLE DIVISION (
     denominacionOficial  VARCHAR(20) PRIMARY KEY,
-    nombreComercial      VARCHAR(20),
-    temporada            NUMBER(5)   NULL,
-    FOREIGN KEY (temporada) REFERENCES TEMPORADA(agno)
+    nombreComercial      VARCHAR(20)
 );
 
 
 -- Tabla para las temporadas
 CREATE TABLE TEMPORADA (
-    agno NUMBER(5) PRIMARY KEY
+    id       NUMBER(20) PRIMARY KEY,
+    agno     NUMBER(5),
+    division VARCHAR(20) NULL,
+    FOREIGN KEY (division)  REFERENCES DIVISION(denominacionOficial)
 );
 
 
