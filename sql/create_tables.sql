@@ -6,31 +6,23 @@ CREATE TABLE DIVISION (
 
 -- Tabla para las temporadas
 CREATE TABLE TEMPORADA (
-    agno NUMBER(5) PRIMARY KEY
+    idTemporada NUMBER(20) PRIMARY KEY,
+    agno        NUMBER(5),
+    division    VARCHAR(20) NULL,
+    FOREIGN KEY (division) REFERENCES DIVISION(denominacionOficial)
 );
 
-
--- Tabla para la relación entre divisiones y temporadas.
-CREATE TABLE pertenece (
-    idPertenece NUMBER(20) PRIMARY KEY,
-    division    VARCHAR(20) NULL, -- NULL para las divisiones que no pertenecen a ninguna temporada (relacion 0-N)
-    temporada   NUMBER(5)   NULL, -- NULL para las temporadas que no pertenecen a ninguna división (relacion 0-N)
-    FOREIGN KEY (division)  REFERENCES DIVISION(denominacionOficial),
-    FOREIGN KEY (temporada) REFERENCES TEMPORADA(agno)
-);
-
-
--- Secuencia para la tabla pertenece
-CREATE SEQUENCE secPertenece
+-- Secuencia para la tabla TEMPORADA
+CREATE SEQUENCE secTemporada
     START WITH 1
     INCREMENT BY 1;
 
--- Trigger para la secuencia en la clave artificial idPertenece de la tabla pertenece
-CREATE OR REPLACE TRIGGER trg_pertenece_id
-BEFORE INSERT ON pertenece
+-- Trigger para la secuencia en la clave artificial idTemporada de la tabla TEMPORADA
+CREATE OR REPLACE TRIGGER trg_temporada_id
+BEFORE INSERT ON TEMPORADA
 FOR EACH ROW
 BEGIN
-    :NEW.idPertenece := secPertenece.NEXTVAL;
+    :NEW.idTemporada := secTemporada.NEXTVAL;
 END;
 /
 
@@ -86,7 +78,7 @@ CREATE TABLE otrosNombres (
     idOtrosNombres NUMBER(20) PRIMARY KEY,
     equipo         VARCHAR(60) NOT NULL,
     otrosNombres   VARCHAR(50),
-    FOREIGN KEY (equipo) REFERENCES EQUIPO(nombreCorto)
+    FOREIGN KEY (equipo) REFERENCES EQUIPO(nombreOficial)
 );
 
 -- Secuencia para la tabla otrosNombres
@@ -106,7 +98,7 @@ END;
 
 -- Tabla para las jornadas
 CREATE TABLE JORNADA (
-    idjornada NUMBER(20) PRIMARY KEY,
+    idJornada NUMBER(20) PRIMARY KEY,
     numero    NUMBER(3) NOT NULL,
     temporada NUMBER(5) NOT NULL,
     FOREIGN KEY (temporada) REFERENCES TEMPORADA(agno)
@@ -117,12 +109,12 @@ CREATE SEQUENCE secJornada
     START WITH 1
     INCREMENT BY 1;
 
--- Trigger para la secuencia en la clave artificial idjornada de la tabla JORNADA
+-- Trigger para la secuencia en la clave artificial idJornada de la tabla JORNADA
 CREATE OR REPLACE TRIGGER trg_jornada_id
 BEFORE INSERT ON JORNADA
 FOR EACH ROW
 BEGIN
-    :NEW.idjornada := secJornada.NEXTVAL;
+    :NEW.idJornada := secJornada.NEXTVAL;
 END;
 /
 
