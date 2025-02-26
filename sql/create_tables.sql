@@ -45,7 +45,7 @@ CREATE TABLE ESTADIO (
 -- Tabla para los equipos
 CREATE TABLE EQUIPO (
     nombreOficial   VARCHAR(60) PRIMARY KEY,
-    nombreCorto     VARCHAR(60) NOT NULL UNIQUE,
+    nombreCorto     VARCHAR(60) NOT NULL,
     nombreHistorico VARCHAR(70),
     ciudad          VARCHAR(60) NOT NULL,
     fechaFundacion  NUMBER(5),
@@ -61,7 +61,7 @@ CREATE TABLE contiene (
     equipo     VARCHAR(60) NOT NULL,
     puntos     NUMBER(3) NULL,
     FOREIGN KEY (temporada) REFERENCES TEMPORADA(agno),
-    FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombreCorto),
+    FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombreOficial),
     CONSTRAINT unq_equipo_temporada UNIQUE (equipo, temporada)
 );
 
@@ -135,8 +135,8 @@ CREATE TABLE PARTIDO (
     golesLocal      NUMBER(3),
     golesVisitante  NUMBER(3),
     FOREIGN KEY (jornada)        REFERENCES JORNADA(idjornada),
-    FOREIGN KEY (equipoLocal)    REFERENCES EQUIPO(nombreCorto),
-    FOREIGN KEY (equipoVisitante) REFERENCES EQUIPO(nombreCorto),
+    FOREIGN KEY (equipoLocal)    REFERENCES EQUIPO(nombreOficial),
+    FOREIGN KEY (equipoVisitante) REFERENCES EQUIPO(nombreOficial),
     CONSTRAINT chk_teams_not_equal CHECK (equipoLocal <> equipoVisitante), -- No se puede jugar un partido contra uno mismo
     CONSTRAINT chk_goles_no_negativos CHECK (golesLocal >= 0 AND golesVisitante >= 0)
 );
