@@ -29,18 +29,18 @@ END;
 
 -- Tabla para los estadios
 CREATE TABLE ESTADIO (
-    nombreEstadio    VARCHAR(60) PRIMARY KEY,
+    nombreEstadio     VARCHAR(60) PRIMARY KEY,
     fechaInauguracion NUMBER(5),
-    capacidad         NUMBER(8)
+    capacidad         NUMBER(9)
 );
 
 
 -- Tabla para los equipos
 CREATE TABLE EQUIPO (
     nombreOficial   VARCHAR(60) PRIMARY KEY,
-    nombreCorto     VARCHAR(60) NOT NULL,
+    nombreCorto     VARCHAR(60),
     nombreHistorico VARCHAR(70),
-    ciudad          VARCHAR(60) NOT NULL,
+    ciudad          VARCHAR(60),
     fechaFundacion  NUMBER(5),
     estadio         VARCHAR(60) NOT NULL,
     FOREIGN KEY (estadio) REFERENCES ESTADIO(nombreEstadio)
@@ -53,7 +53,7 @@ CREATE TABLE contiene (
     temporada  NUMBER(4) NOT NULL,
     equipo     VARCHAR(60) NOT NULL,
     puntos     NUMBER(3) NULL,
-    FOREIGN KEY (temporada) REFERENCES TEMPORADA(agno),
+    FOREIGN KEY (temporada) REFERENCES TEMPORADA(idTemporada),
     FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombreOficial),
     CONSTRAINT unq_equipo_temporada UNIQUE (equipo, temporada)
 );
@@ -101,7 +101,7 @@ CREATE TABLE JORNADA (
     idJornada NUMBER(20) PRIMARY KEY,
     numero    NUMBER(3) NOT NULL,
     temporada NUMBER(5) NOT NULL,
-    FOREIGN KEY (temporada) REFERENCES TEMPORADA(agno)
+    FOREIGN KEY (temporada) REFERENCES TEMPORADA(idTemporada)
 );
 
 -- Secuencia para la tabla JORNADA
