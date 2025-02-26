@@ -6,10 +6,17 @@ CREATE TABLE DIVISION (
 
 -- Tabla para las temporadas
 CREATE TABLE TEMPORADA (
-    id       NUMBER(20) PRIMARY KEY,
-    agno     NUMBER(5),
-    division VARCHAR(20) NULL,
-    FOREIGN KEY (division)  REFERENCES DIVISION(denominacionOficial)
+    agno NUMBER(5) PRIMARY KEY
+);
+
+
+-- Tabla para la relación entre divisiones y temporadas.
+CREATE TABLE pertenece (
+    idPertenece NUMBER(20) PRIMARY KEY,
+    division    VARCHAR(20) NULL, -- NULL para las divisiones que no pertenecen a ninguna temporada (relacion 0-N)
+    temporada   NUMBER(5)   NULL, -- NULL para las temporadas que no pertenecen a ninguna división (relacion 0-N)
+    FOREIGN KEY (division)  REFERENCES DIVISION(denominacionOficial),
+    FOREIGN KEY (temporada) REFERENCES TEMPORADA(agno)
 );
 
 
