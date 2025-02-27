@@ -1,3 +1,4 @@
+-- Tabla para las divisiones
 CREATE TABLE DIVISION (
     denominacionOficial  VARCHAR(20) PRIMARY KEY,
     nombreComercial      VARCHAR(20)
