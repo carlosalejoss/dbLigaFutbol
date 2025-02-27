@@ -50,9 +50,9 @@ CREATE TABLE EQUIPO (
 -- Tabla para la relación entre equipos y temporadas
 CREATE TABLE contiene (
     idContiene NUMBER(20) PRIMARY KEY,
-    temporada  NUMBER(4) NOT NULL,
+    temporada  NUMBER(20) NOT NULL,
     equipo     VARCHAR(60) NOT NULL,
-    puntos     NUMBER(3) NULL,
+    puntos     NUMBER(4) NULL,
     FOREIGN KEY (temporada) REFERENCES TEMPORADA(idTemporada),
     FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombreOficial),
     CONSTRAINT unq_equipo_temporada UNIQUE (equipo, temporada)
@@ -77,7 +77,7 @@ END;
 CREATE TABLE otrosNombres (
     idOtrosNombres NUMBER(20) PRIMARY KEY,
     equipo         VARCHAR(60) NOT NULL,
-    otrosNombres   VARCHAR(50),
+    otrosNombres   VARCHAR(60),
     FOREIGN KEY (equipo) REFERENCES EQUIPO(nombreOficial)
 );
 
@@ -99,8 +99,8 @@ END;
 -- Tabla para las jornadas
 CREATE TABLE JORNADA (
     idJornada NUMBER(20) PRIMARY KEY,
-    numero    NUMBER(3) NOT NULL,
-    temporada NUMBER(5) NOT NULL,
+    numero    NUMBER(4) NOT NULL,
+    temporada NUMBER(20) NOT NULL,
     FOREIGN KEY (temporada) REFERENCES TEMPORADA(idTemporada)
 );
 
