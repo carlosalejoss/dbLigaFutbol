@@ -12,7 +12,7 @@ equipos_estadios AS (
 ),
 primeros_puestos AS (
     -- Equipos que quedaron en primer lugar (incluyendo empates)
-    SELECT c.equipo, t.agno, c.puntos
+    SELECT c.equipo, c.temporada
     FROM CONTIENE c
     JOIN TEMPORADA t ON c.temporada = t.idTemporada
     WHERE t.division = '1'
@@ -24,7 +24,7 @@ primeros_puestos AS (
 ),
 equipos_empatados_segundo AS (
     -- Equipos que están empatados en el segundo puesto (sin calcular aún los goles)
-    SELECT c.equipo, t.agno, c.puntos, c.temporada
+    SELECT c.equipo, c.temporada
     FROM CONTIENE c
     JOIN TEMPORADA t ON c.temporada = t.idTemporada
     WHERE t.division = '1'
@@ -39,8 +39,8 @@ equipos_empatados_segundo AS (
             WHERE c4.temporada = c3.temporada
         )
     )
-    -- Solo incluir segundos puestos si hay exactamente 1 equipo en primer lugar
-    AND (SELECT COUNT(*) FROM primeros_puestos pp WHERE pp.agno = t.agno) = 1
+    -- Solo incluir segundos puestos si hay exactamente 1 equipo en primer lugar en esa temporada
+    AND (SELECT COUNT(*) FROM primeros_puestos pp WHERE pp.temporada = c.temporada) = 1
 ),
 goles_empatados AS (
     -- Calcular goles SOLO de los equipos que están en el segundo puesto empatados en la temporada en cuestión
@@ -56,7 +56,7 @@ goles_empatados AS (
 ),
 segundos_puestos AS (
     -- Seleccionar el equipo con la mejor diferencia de goles en caso de empate en el segundo puesto
-    SELECT ees.equipo, ees.agno
+    SELECT ees.equipo
     FROM equipos_empatados_segundo ees
     JOIN goles_empatados g ON ees.equipo = g.equipo AND ees.temporada = g.temporada
     WHERE (g.golesFavor - g.golesContra) = (
@@ -66,11 +66,10 @@ segundos_puestos AS (
         WHERE g2.temporada = ees.temporada
     )
 )
-SELECT DISTINCT ee.nombreOficial, pe.agno AS temporada
+SELECT DISTINCT ee.nombreOficial
 FROM equipos_estadios ee
 JOIN (
-    SELECT equipo, agno FROM primeros_puestos
+    SELECT equipo FROM primeros_puestos
     UNION ALL
-    SELECT equipo, agno FROM segundos_puestos
-) pe ON ee.nombreOficial = pe.equipo
-ORDER BY pe.agno;
+    SELECT equipo FROM segundos_puestos
+) pe ON ee.nombreOficial = pe.equipo;
