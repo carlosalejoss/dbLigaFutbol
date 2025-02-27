@@ -26,6 +26,6 @@ FROM TEMPORADA t
 JOIN JORNADA j ON t.idTemporada = j.temporada
 JOIN PARTIDO p ON j.idJornada = p.jornada
 WHERE (p.equipoLocal = 'Real Zaragoza' OR p.equipoVisitante = 'Real Zaragoza')
-AND t.idTemporada IN (SELECT temporada FROM temporadas_validas)
+  AND t.idTemporada IN (SELECT temporada FROM temporadas_validas)
 GROUP BY t.division, t.agno
 ORDER BY t.agno;
