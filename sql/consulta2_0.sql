@@ -38,4 +38,5 @@ equipos_finales AS (
 )
 SELECT ee.nombreOficial
 FROM equipos_estadios ee
-JOIN equipos_finales ef ON ee.nombreOficial = ef.equipo;
+JOIN equipos_finales ef ON ee.nombreOficial = ef.equipo
+ORDER BY ee.nombreOficial;

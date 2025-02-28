@@ -21,4 +21,5 @@ posiciones_exitosas AS (
 )
 SELECT DISTINCT ee.nombreOficial
 FROM equipos_estadios ee
-JOIN posiciones_exitosas pe ON ee.nombreOficial = pe.equipo;
+JOIN posiciones_exitosas pe ON ee.nombreOficial = pe.equipo
+ORDER BY ee.nombreOficial;

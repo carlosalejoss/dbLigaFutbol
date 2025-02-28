@@ -72,4 +72,5 @@ JOIN (
     SELECT equipo FROM primeros_puestos
     UNION ALL
     SELECT equipo FROM segundos_puestos
-) pe ON ee.nombreOficial = pe.equipo;
+) pe ON ee.nombreOficial = pe.equipo
+ORDER BY ee.nombreOficial;
