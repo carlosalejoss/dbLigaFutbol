@@ -19,4 +19,5 @@ jornada_max_goles AS (
 )
 SELECT t.agno, j.numero_jornada, j.total_goles
 FROM jornada_max_goles j
-JOIN TEMPORADA t ON j.temporada = t.idTemporada;
+JOIN TEMPORADA t ON j.temporada = t.idTemporada
+ORDER BY j.numero_jornada;
