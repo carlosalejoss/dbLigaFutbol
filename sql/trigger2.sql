@@ -1,21 +1,20 @@
-CREATE OR REPLACE TRIGGER trg_validar_division_equipo
-BEFORE INSERT OR UPDATE ON contiene
+CREATE OR REPLACE TRIGGER trg_equipo_unico_partido_jornada
+BEFORE INSERT ON PARTIDO
 FOR EACH ROW
 DECLARE
     v_count NUMBER;
 BEGIN
-    -- Contar cuántas divisiones diferentes tiene el equipo en la misma temporada (mismo año)
-    SELECT COUNT(DISTINCT t.division)
+    -- Contar cuántos partidos tiene el equipo en la jornada
+    SELECT COUNT(*)
     INTO v_count
-    FROM contiene c
-    JOIN TEMPORADA t ON c.temporada = t.idTemporada
-    WHERE c.equipo = :NEW.equipo
-      AND t.agno = (SELECT agno FROM TEMPORADA WHERE idTemporada = :NEW.temporada)
-      AND c.temporada <> :NEW.temporada;  -- Excluir la misma temporada
+    FROM PARTIDO
+    WHERE jornada = :NEW.jornada
+      AND (:NEW.equipoLocal IN (equipoLocal, equipoVisitante) 
+           OR :NEW.equipoVisitante IN (equipoLocal, equipoVisitante));
 
-    -- Si el equipo ya está en otra división en el mismo año, bloquear la inserción
+    -- Si el equipo ya tiene un partido en la jornada, bloquear la inserción
     IF v_count > 0 THEN
-        RAISE_APPLICATION_ERROR(-20008, 'Un equipo no puede estar en más de una división en la misma temporada.');
+        RAISE_APPLICATION_ERROR(-20005, 'Un equipo no puede jugar más de un partido en la misma jornada.');
     END IF;
 END;
 /
