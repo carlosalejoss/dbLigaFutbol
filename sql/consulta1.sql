@@ -20,12 +20,26 @@ temporadas_validas AS (
     FROM conteo_victorias c
     GROUP BY c.temporada
     HAVING COUNT(*) >= 4
+),
+goles_locales AS (
+    SELECT t.division, t.agno, SUM(p.golesLocal) AS goles_zaragoza
+    FROM TEMPORADA t
+    JOIN JORNADA j ON t.idTemporada = j.temporada
+    JOIN PARTIDO p ON j.idJornada = p.jornada
+    WHERE p.equipoLocal = 'Real Zaragoza'
+      AND t.idTemporada IN (SELECT temporada FROM temporadas_validas)
+    GROUP BY t.division, t.agno
+),
+goles_visitantes AS (
+    SELECT t.division, t.agno, SUM(p.golesVisitante) AS goles_zaragoza
+    FROM TEMPORADA t
+    JOIN JORNADA j ON t.idTemporada = j.temporada
+    JOIN PARTIDO p ON j.idJornada = p.jornada
+    WHERE p.equipoVisitante = 'Real Zaragoza'
+      AND t.idTemporada IN (SELECT temporada FROM temporadas_validas)
+    GROUP BY t.division, t.agno
 )
-SELECT t.division, t.agno, SUM(CASE WHEN p.equipoLocal = 'Real Zaragoza' THEN p.golesLocal ELSE p.golesVisitante END) AS goles_zaragoza
-FROM TEMPORADA t
-JOIN JORNADA j ON t.idTemporada = j.temporada
-JOIN PARTIDO p ON j.idJornada = p.jornada
-WHERE (p.equipoLocal = 'Real Zaragoza' OR p.equipoVisitante = 'Real Zaragoza')
-  AND t.idTemporada IN (SELECT temporada FROM temporadas_validas)
-GROUP BY t.division, t.agno
-ORDER BY t.agno;
+SELECT gl.division, gl.agno, (gl.goles_zaragoza + gv.goles_zaragoza) AS goles_zaragoza
+FROM goles_locales gl
+JOIN goles_visitantes gv ON gl.division = gv.division AND gl.agno = gv.agno
+ORDER BY gl.agno;
