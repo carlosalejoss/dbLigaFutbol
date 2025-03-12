@@ -32,14 +32,14 @@ END;
 CREATE TABLE ESTADIO (
     nombreEstadio     VARCHAR(60) PRIMARY KEY,
     fechaInauguracion NUMBER(5),
-    capacidad         NUMBER(9)
+    capacidad         NUMBER(9) NULL
 );
 
 
 -- Tabla para los equipos
 CREATE TABLE EQUIPO (
     nombreOficial   VARCHAR(60) PRIMARY KEY,
-    nombreCorto     VARCHAR(60),
+    nombreCorto     VARCHAR(60) NULL,
     nombreHistorico VARCHAR(70),
     ciudad          VARCHAR(60),
     fechaFundacion  NUMBER(5),
@@ -56,6 +56,7 @@ CREATE TABLE contiene (
     puntos     NUMBER(4) NOT NULL, -- Al poblar la base puntos seran 0, se calculan con una consulta 
     FOREIGN KEY (temporada) REFERENCES TEMPORADA(idTemporada),
     FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombreOficial)
+    -- La restriccion de que un equipo no puede aparecer en 1 y 2 en el mismo agno se hace en un trigger
 );
 
 -- Secuencia para la tabla contiene
