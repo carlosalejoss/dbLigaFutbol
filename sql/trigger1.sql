@@ -17,11 +17,11 @@ BEGIN
     JOIN TEMPORADA t ON c.temporada = t.idTemporada
     WHERE c.equipo = :NEW.equipo
       AND t.agno = (SELECT agno FROM TEMPORADA WHERE idTemporada = :NEW.temporada)
-      AND t.division IN ('Primera', 'Segunda')  -- Solo nos interesa Primera y Segunda
+      AND t.division IN ('1', '2')  -- Solo nos interesa Primera y Segunda
       AND c.temporada <> :NEW.temporada;  -- Excluir la misma temporada
 
     -- Si el equipo ya ha jugado en Primera o Segunda en el mismo año y ahora se intenta agregar en una de esas divisiones, impedir la inserción
-    IF v_count > 0 AND v_division IN ('Primera', 'Segunda') THEN
+    IF v_count > 0 AND v_division IN ('1', '2') THEN
         RAISE_APPLICATION_ERROR(-20010, 'Un equipo no puede jugar en Primera y Segunda en la misma temporada.');
     END IF;
 END;
