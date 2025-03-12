@@ -55,7 +55,7 @@ CREATE TABLE contiene (
     equipo     VARCHAR(60) NOT NULL,
     puntos     NUMBER(4) NOT NULL, -- Al poblar la base puntos seran 0, se calculan con una consulta 
     FOREIGN KEY (temporada) REFERENCES TEMPORADA(idTemporada),
-    FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombreOficial),
+    FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombreOficial)
 );
 
 -- Secuencia para la tabla contiene
