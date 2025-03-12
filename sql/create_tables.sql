@@ -53,7 +53,7 @@ CREATE TABLE contiene (
     idContiene NUMBER(20) PRIMARY KEY,
     temporada  NUMBER(20) NOT NULL,
     equipo     VARCHAR(60) NOT NULL,
-    puntos     NUMBER(4) NOT NULL,
+    puntos     NUMBER(4) NOT NULL, -- Al poblar la base puntos seran 0, se calculan con una consulta 
     FOREIGN KEY (temporada) REFERENCES TEMPORADA(idTemporada),
     FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombreOficial),
 );
@@ -125,8 +125,8 @@ CREATE TABLE PARTIDO (
     jornada         NUMBER(20) NOT NULL,
     equipoLocal     VARCHAR(60) NOT NULL,
     equipoVisitante VARCHAR(60) NOT NULL,
-    golesLocal      NUMBER(3),
-    golesVisitante  NUMBER(3),
+    golesLocal      NUMBER(3) NOT NULL,
+    golesVisitante  NUMBER(3) NOT NULL,
     FOREIGN KEY (jornada)        REFERENCES JORNADA(idjornada),
     FOREIGN KEY (equipoLocal)    REFERENCES EQUIPO(nombreOficial),
     FOREIGN KEY (equipoVisitante) REFERENCES EQUIPO(nombreOficial),
