@@ -43,7 +43,7 @@ CREATE TABLE EQUIPO (
     nombreHistorico VARCHAR(70),
     ciudad          VARCHAR(60),
     fechaFundacion  NUMBER(5),
-    estadio         VARCHAR(60) NOT NULL,
+    estadio         VARCHAR(60),
     FOREIGN KEY (estadio) REFERENCES ESTADIO(nombreEstadio)
 );
 
