@@ -56,7 +56,6 @@ CREATE TABLE contiene (
     puntos     NUMBER(4) NULL,
     FOREIGN KEY (temporada) REFERENCES TEMPORADA(idTemporada),
     FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombreOficial),
-    CONSTRAINT unq_equipo_temporada UNIQUE (equipo, temporada)
 );
 
 -- Secuencia para la tabla contiene
