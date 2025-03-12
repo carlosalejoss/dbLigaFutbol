@@ -8,7 +8,7 @@ CREATE TABLE DIVISION (
 -- Tabla para las temporadas
 CREATE TABLE TEMPORADA (
     idTemporada NUMBER(20) PRIMARY KEY,
-    agno        NUMBER(5),
+    agno        NUMBER(5) NOT NULL,
     division    VARCHAR(20) NULL,
     FOREIGN KEY (division) REFERENCES DIVISION(denominacionOficial)
 );
@@ -53,7 +53,7 @@ CREATE TABLE contiene (
     idContiene NUMBER(20) PRIMARY KEY,
     temporada  NUMBER(20) NOT NULL,
     equipo     VARCHAR(60) NOT NULL,
-    puntos     NUMBER(4) NULL,
+    puntos     NUMBER(4) NOT NULL,
     FOREIGN KEY (temporada) REFERENCES TEMPORADA(idTemporada),
     FOREIGN KEY (equipo)    REFERENCES EQUIPO(nombreOficial),
 );
