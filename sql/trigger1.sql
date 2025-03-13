@@ -1,28 +1,78 @@
-CREATE OR REPLACE TRIGGER trg_evitar_primera_segunda
-BEFORE INSERT OR UPDATE ON contiene
-FOR EACH ROW
-DECLARE
-    v_count NUMBER;
-    v_division VARCHAR2(20);
+CREATE OR REPLACE TRIGGER trg_actualizar_puntos
+AFTER INSERT OR UPDATE OR DELETE ON PARTIDO
 BEGIN
-    -- Obtener la división de la nueva temporada
-    SELECT division INTO v_division
-    FROM TEMPORADA
-    WHERE idTemporada = :NEW.temporada;
+    -- Actualizar los puntos de los equipos afectados
+    UPDATE CONTIENE c
+    SET c.puntos = (
+        SELECT SUM(puntos)
+        FROM (
+            -- Puntos obtenidos como equipo local
+            SELECT p.equipoLocal AS equipo, t.idTemporada AS temporada, 3 AS puntos
+            FROM PARTIDO p
+            JOIN JORNADA j ON p.jornada = j.idJornada
+            JOIN TEMPORADA t ON j.temporada = t.idTemporada
+            WHERE p.golesLocal > p.golesVisitante
 
-    -- Contar cuántas veces el equipo ha jugado en Primera o Segunda en el mismo año
-    SELECT COUNT(DISTINCT t.division)
-    INTO v_count
-    FROM contiene c
-    JOIN TEMPORADA t ON c.temporada = t.idTemporada
-    WHERE c.equipo = :NEW.equipo
-      AND t.agno = (SELECT agno FROM TEMPORADA WHERE idTemporada = :NEW.temporada)
-      AND t.division IN ('1', '2')  -- Solo nos interesa Primera y Segunda
-      AND c.temporada <> :NEW.temporada;  -- Excluir la misma temporada
+            UNION ALL
 
-    -- Si el equipo ya ha jugado en Primera o Segunda en el mismo año y ahora se intenta agregar en una de esas divisiones, impedir la inserción
-    IF v_count > 0 AND v_division IN ('1', '2') THEN
-        RAISE_APPLICATION_ERROR(-20010, 'Un equipo no puede jugar en Primera y Segunda en la misma temporada.');
-    END IF;
+            -- Empates como equipo local
+            SELECT p.equipoLocal AS equipo, t.idTemporada AS temporada, 1 AS puntos
+            FROM PARTIDO p
+            JOIN JORNADA j ON p.jornada = j.idJornada
+            JOIN TEMPORADA t ON j.temporada = t.idTemporada
+            WHERE p.golesLocal = p.golesVisitante
+
+            UNION ALL
+
+            -- Empates como equipo visitante
+            SELECT p.equipoVisitante AS equipo, t.idTemporada AS temporada, 1 AS puntos
+            FROM PARTIDO p
+            JOIN JORNADA j ON p.jornada = j.idJornada
+            JOIN TEMPORADA t ON j.temporada = t.idTemporada
+            WHERE p.golesVisitante = p.golesLocal
+
+            UNION ALL
+
+            -- Puntos obtenidos como equipo visitante
+            SELECT p.equipoVisitante AS equipo, t.idTemporada AS temporada, 3 AS puntos
+            FROM PARTIDO p
+            JOIN JORNADA j ON p.jornada = j.idJornada
+            JOIN TEMPORADA t ON j.temporada = t.idTemporada
+            WHERE p.golesVisitante > p.golesLocal
+
+            UNION ALL
+
+            -- Derrotas como equipo local
+            SELECT p.equipoLocal AS equipo, t.idTemporada AS temporada, 0 AS puntos
+            FROM PARTIDO p
+            JOIN JORNADA j ON p.jornada = j.idJornada
+            JOIN TEMPORADA t ON j.temporada = t.idTemporada
+            WHERE p.golesLocal < p.golesVisitante
+
+            UNION ALL
+
+            -- Derrotas como equipo visitante
+            SELECT p.equipoVisitante AS equipo, t.idTemporada AS temporada, 0 AS puntos
+            FROM PARTIDO p
+            JOIN JORNADA j ON p.jornada = j.idJornada
+            JOIN TEMPORADA t ON j.temporada = t.idTemporada
+            WHERE p.golesVisitante < p.golesLocal
+        ) puntos_totales
+        WHERE puntos_totales.equipo = c.equipo
+        AND puntos_totales.temporada = c.temporada
+    )
+    WHERE EXISTS (
+        -- Verificar que el equipo ha jugado al menos un partido en la temporada
+        SELECT 1 FROM PARTIDO p
+        JOIN JORNADA j ON p.jornada = j.idJornada
+        JOIN TEMPORADA t ON j.temporada = t.idTemporada
+        WHERE (p.equipoLocal = c.equipo OR p.equipoVisitante = c.equipo)
+        AND t.idTemporada = c.temporada
+    );
+
+    -- Manejo de valores NULL: Si un equipo no tiene partidos, aseguramos que tenga puntos = 0
+    UPDATE CONTIENE
+    SET puntos = 0
+    WHERE puntos IS NULL;
 END;
 /
