@@ -1,44 +1,35 @@
-CREATE OR REPLACE TRIGGER trg_actualizar_puntos
-AFTER INSERT OR UPDATE OR DELETE ON PARTIDO
+CREATE OR REPLACE TRIGGER trg_validar_fundacion_equipo
+BEFORE INSERT OR UPDATE ON PARTIDO
 FOR EACH ROW
+DECLARE
+    v_fundacion_local NUMBER;
+    v_fundacion_visitante NUMBER;
+    v_anio_temporada NUMBER;
 BEGIN
-    -- Actualizar los puntos de los equipos locales
-    UPDATE CONTIENE c
-    SET c.puntos = (
-        SELECT SUM(puntos)
-        FROM (
-            -- Puntos como equipo local
-            SELECT p.equipoLocal AS equipo, t.idTemporada AS temporada,
-                CASE 
-                    WHEN p.golesLocal > p.golesVisitante THEN 3  -- Victoria local
-                    WHEN p.golesLocal = p.golesVisitante THEN 1  -- Empate
-                    ELSE 0  -- Derrota local
-                END AS puntos
-            FROM PARTIDO p
-            JOIN JORNADA j ON p.jornada = j.idJornada
-            JOIN TEMPORADA t ON j.temporada = t.idTemporada
-            WHERE p.equipoLocal = c.equipo
-            AND t.idTemporada = c.temporada
+    -- Obtener el año de fundación del equipo local
+    SELECT fechaFundacion INTO v_fundacion_local
+    FROM EQUIPO
+    WHERE nombreOficial = :NEW.equipoLocal;
 
-            UNION ALL
+    -- Obtener el año de fundación del equipo visitante
+    SELECT fechaFundacion INTO v_fundacion_visitante
+    FROM EQUIPO
+    WHERE nombreOficial = :NEW.equipoVisitante;
 
-            -- Puntos como equipo visitante
-            SELECT p.equipoVisitante AS equipo, t.idTemporada AS temporada,
-                CASE 
-                    WHEN p.golesVisitante > p.golesLocal THEN 3  -- Victoria visitante
-                    WHEN p.golesVisitante = p.golesLocal THEN 1  -- Empate
-                    ELSE 0  -- Derrota visitante
-                END AS puntos
-            FROM PARTIDO p
-            JOIN JORNADA j ON p.jornada = j.idJornada
-            JOIN TEMPORADA t ON j.temporada = t.idTemporada
-            WHERE p.equipoVisitante = c.equipo
-            AND t.idTemporada = c.temporada
-        ) puntos_totales
-    )
-    WHERE c.equipo IN (:OLD.equipoLocal, :OLD.equipoVisitante)
-    AND c.temporada = (SELECT temporada FROM JORNADA WHERE idJornada = :OLD.jornada);
+    -- Obtener el año de la temporada del partido
+    SELECT agno INTO v_anio_temporada
+    FROM TEMPORADA t
+    JOIN JORNADA j ON t.idTemporada = j.temporada
+    WHERE j.idJornada = :NEW.jornada;
 
+    -- Si el equipo local tiene fecha de fundación, verificar que no sea posterior a la temporada
+    IF v_fundacion_local IS NOT NULL AND v_fundacion_local > v_anio_temporada THEN
+        RAISE_APPLICATION_ERROR(-20060, 'Error: El equipo local no puede jugar en una temporada anterior a su fundación.');
+    END IF;
+
+    -- Si el equipo visitante tiene fecha de fundación, verificar que no sea posterior a la temporada
+    IF v_fundacion_visitante IS NOT NULL AND v_fundacion_visitante > v_anio_temporada THEN
+        RAISE_APPLICATION_ERROR(-20061, 'Error: El equipo visitante no puede jugar en una temporada anterior a su fundación.');
+    END IF;
 END;
 /
-
